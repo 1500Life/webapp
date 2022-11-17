@@ -1,0 +1,58 @@
+input[type=text]{
+  color: #E7E9EB
+}
+
+html, body {
+  height: 100%;
+  background-color: #2e2e2e;
+  color: #717171;
+  color: #E7E9EB;
+  font-family: tahoma;
+}
+
+twitter-tweet{
+  font-size:10px;
+  width: 200px;
+}
+
+.form-label{
+  text-align: right;
+  width: 60%;
+}
+
+/* CSS only for examples not required for centering */
+.container {
+  height: 100%;
+}
+
+.note {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  top: 0;
+  padding: 5px;
+  background: #eee;
+  max-width: 360px;
+}
+
+#header{
+  background-color: #3b3b3b;
+  margin-bottom: 20px;
+  max-width: 100%;
+}
+
+.form-input-search{
+  display: flex;
+  z-index: 3;
+  height: 44px;
+  background: #252525;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 3pxrgba(23,23,23,0.24);
+  border-radius: 24px;
+  margin: 0 auto;
+  width: 60%;
+}
+
+/* show border around full height container */
+.h-100 {
+}
