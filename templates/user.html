@@ -78,7 +78,9 @@
             </h6>
             {% endif %}
             {% if accounts|length >= 2 %}
+              <p class="title-top">
               دارای سابقه تغییر اکانت‌های زیر
+              </p>
               <hr>
               <table class="table" style="color:white;">
                 <tr>
@@ -97,44 +99,96 @@
               {% endfor %}
               </table>
             {% endif %}
+
+
             {% if tweets %}
+            <p class="title-top">
             توییت‌های حساسیت برانگیز کاربر
-            <hr>
+            </p>
+            <table class="table" style="color:white">
+              <thead>
+                <tr>
+                  <th scope="col">متن</th>
+                  <th scope="col">نمایش</th>
+                  <th scope="col">آرشیو</th>
+                  <td scope="col">لایک</td>
+                </tr>
+              </thead>
+              <tbody>
             {% endif %}
             {% for i in tweets %}
-                <p>
-                  <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
-                    نمایش توییت
-                  </a>
-                </p>
-              <div class="collapse" id="collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}">
-                  <div class="card card-body">
-                      <blockquote class="twitter-tweet"><p lang="en" dir="ltr">G(old) <a href="https://t.co/wOpJfCMLCE">pic.twitter.com/wOpJfCMLCE</a></p>&mdash; Out Of Context Twiter-e-Farsi (@OutFarsi) <a href="https://twitter.com/OutFarsi/status/{{ i.tweet_id }}?ref_src=twsrc%5Etfw">July 22, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                  </div>
-              </div>
-              <a href="{{ i.archive }}">آرشیو وب</a>
-              <h1>
-                ----
-              </h1>
+                <tr>
+                  <th scope="row">
+                    <p id="tweet">{{ i.text }}</p>
+                  </th>
+                  <td>
+                    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                      نمایش
+                    </a>
+                    <div class="collapse" id="collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}">
+                      <div class="card card-body">
+                          <blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/twitter/status/{{ i.tweet_id }}"></a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="{{ i.archive }}">آرشیو</a>
+                  </td>
+                  <td>
+                    <a href="https://twitter.com/i/web/status/{{ i.tweet_id }}">{{ i.like_count }}</a>
+                  </td>
+                </tr>
+            {% endfor %}
+            {% if tweets %}
+            </tbody>
+          </table>
+            {% endif %}
+
+            {% if labels %}
+            <p class="title-top">
+            وضعیت توییت‌های حساسیت برانگیز لایک شده کاربر
+            </p>
+            <table class="table" style="color:white">
+              <thead>
+                <tr>
+                  <th scope="col">متن</th>
+                  <th scope="col">نمایش</th>
+                  <th scope="col">آرشیو</th>
+                  <td scope="col">لایک</td>
+                </tr>
+              </thead>
+              <tbody>
+            {% endif %}
+
+            {% for i in labels %}
+                <tr>
+                  <th scope="row">
+                    <p id="tweet">{{ i.text }}</p>
+                  </th>
+                  <td>
+                    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                      نمایش
+                    </a>
+                    <div class="collapse" id="collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}">
+                      <div class="card card-body">
+                          <blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/twitter/status/{{ i.tweet_id }}"></a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="{{ i.archive }}">آرشیو</a>
+                  </td>
+                  <td>
+                    <a href="https://twitter.com/i/web/status/{{ i.tweet_id }}">{{ i.like_count }}</a>
+                  </td>
+                </tr>
             {% endfor %}
             {% if labels %}
-            <hr>
-            وضعیت توییت‌های حساسیت برانگیز لایک شده کاربر
-            <hr>
+              </tbody>
+            </table>
             {% endif %}
-            {% for i in labels %}
-                <p>
-                    <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
-                        نمایش توییت
-                    </a>
-                  </p>
-                <div class="collapse" id="collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}">
-                    <div class="card card-body">
-                        <blockquote class="twitter-tweet"><p lang="en" dir="ltr"><a href="https://twitter.com/twitter/status/{{ i.tweet_id }}"></a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    </div>
-                </div>
-                <a href="{{ i.archive }}">آرشیو وب</a>
-            {% endfor %}
+    
+
           </div>
           <div class="col">
           </div>

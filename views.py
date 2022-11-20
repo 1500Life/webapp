@@ -105,15 +105,6 @@ def api_user(request):
 
         accounts = Users.objects.filter(user_id=user.user_id).values()
 
-        # accounts = []
-        # for account in accounts_result:
-        #     accounts.append({
-        #         'name': account.name,
-        #         'user_name': account.user_name,
-        #         'description': account.description,
-        #         'profile_image_url': account.profile_image_url,
-        #     })
-
         labels = []
         for ut in users_tweets:
             try:
@@ -223,6 +214,8 @@ def show(request):
                     'name': get_label.name,
                     'fa': get_label.lang_fa,
                     'archive' : tweet.archive,
+                    'text': tweet.text,
+                    'like_count': tweet.like_count,
                     })
         except:
             pass
@@ -233,12 +226,15 @@ def show(request):
             for tweet in tweets:
                 tl = TweetsLabels.objects.filter(tweet_id=tweet['id'])[0]
                 get_label = Labels.objects.filter(id=tl.label_id)[0]
+                get_tweet = Tweets.objects.filter(id=tl.tweet_id)[:1].get()
                 label_tweets.append({
                     'label_id': tl.label_id,
                     'tweet_id': tl.tweet_id,
                     'name': get_label.name,
                     'fa': get_label.lang_fa,
-                    'archive' : tweet['archive']
+                    'archive' : tweet['archive'],
+                    'text': get_tweet.text,
+                    'like_count': get_tweet.like_count,
                     })
         except:
             pass
