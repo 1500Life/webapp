@@ -179,9 +179,13 @@ class Command(BaseCommand):
 
             try:
                 statusFile = open("status.csv", "r")
-                self.next_token = eval(statusFile.read())['next_token']
-                if self.next_token:
-                    json_response["meta"]["next_token"] = self.next_token
+                status_content = eval(statusFile.read())
+                if 'next_token' in status_content:
+                    self.next_token = status_content['next_token']
+                    if self.next_token:
+                        json_response["meta"]["next_token"] = self.next_token
+                else:
+                    pass
             except FileNotFoundError:
                 print('Status file does not exists.')
 
@@ -191,7 +195,7 @@ class Command(BaseCommand):
 
             self.insertTweet(tweet_id, self.label_name)
 
-            while json_response["meta"]["next_token"]:
+            while 'next_token' in json_response["meta"] and json_response["meta"]["next_token"]:
 
                 tweets_counter += json_response["meta"]["result_count"]
 
@@ -229,35 +233,38 @@ class Command(BaseCommand):
     def insertUser(self, json_response, tweets_counter, tweet_id):
             user_bulk_list = list()
 
-            for i in json_response['data']:
-                if i['username']:
-                    user_bulk_list.append(
-                        Users(
-                            user_name = i['username'],
-                            user_id = i['id'],
-                            created_at = parse_date(i['created_at']),
-                            description = Truncator(i['description']).chars(200),
-                            name = i['name'],
-                            profile_image_url = i['profile_image_url'],
-                            protected = i['protected'],
-                            public_metrics = i['public_metrics'],
-                            verified = i['verified'],
+            if 'data' in json_response:
+                for i in json_response['data']:
+                    if i['username']:
+                        user_bulk_list.append(
+                            Users(
+                                user_name = i['username'],
+                                user_id = i['id'],
+                                created_at = parse_date(i['created_at']),
+                                description = Truncator(i['description']).chars(200),
+                                name = i['name'],
+                                profile_image_url = i['profile_image_url'],
+                                protected = i['protected'],
+                                public_metrics = i['public_metrics'],
+                                verified = i['verified'],
+                            )
                         )
-                    )
 
-            Users.objects.bulk_create(user_bulk_list, ignore_conflicts=True)
+                Users.objects.bulk_create(user_bulk_list, ignore_conflicts=True)
 
-            for i in json_response['data']:
-                try:
-                    UsersTweets.objects.create(
-                        users_id = i['id'],
-                        tweets_id = tweet_id,
-                    ).save()
-                    print("%s - \tUser %s[%s] \t\t\t %s tweet" %(str(datetime.now()),i['username'],i['id'], tweet_id))
-                except:
-                    pass
+                for i in json_response['data']:
+                    try:
+                        UsersTweets.objects.create(
+                            users_id = i['id'],
+                            tweets_id = tweet_id,
+                        ).save()
+                        print("%s - \tUser %s[%s] \t\t\t %s tweet" %(str(datetime.now()),i['username'],i['id'], tweet_id))
+                    except:
+                        pass
 
-            tweets_counter += json_response["meta"]["result_count"]
+                tweets_counter += json_response["meta"]["result_count"]
+            else:
+                pass
 
     def insertTweetDetails(self, tweet_id):
         tweet = Tweets.objects.filter(id=tweet_id)

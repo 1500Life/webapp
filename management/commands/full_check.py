@@ -120,17 +120,20 @@ class Command(BaseCommand):
                                         if ('famtrip' in labels) or ('famtrip' in label_tweets):
                                             label_list.append('فم‌تریپ چک')
                                             label_counter += 1
+                                        if ('support_mullah_team' in labels) or ('support_mullah_team' in label_tweets):
+                                            label_list.append('تیم ملا چک 🩸⚽')
+                                            label_counter += 1
                                         
                                         page_link = 'https://1500.life/show?username={}'.format(user[0].user_name)
 
-                                        if (label_counter <= 1):
+                                        # if (label_counter <= 1):
                                             
-                                            for element in tweets_fa:
-                                                if len(element) <= 20:
-                                                    test_label_list =  "- {}\n".format(element)
-                                                    message = "شناسه کاربر:  {}\n{} فعالیت مشکوک از {} در پایگاه داده ما یافت شد. \n\n{}\n  اطلاعات کامل در سایت. \n{}\n\n ⚠️ نتایج بات 🤖".format(user[0].user_id, convert_numbers.english_to_persian(len(labels)+len(label_tweets)), user[0].user_name, test_label_list, page_link)
-                                                    if len(message) <= 250:
-                                                        label_list.append(element)
+                                        #     for element in tweets_fa:
+                                        #         if len(element) <= 20:
+                                        #             test_label_list =  "- {}\n".format(element)
+                                        #             message = "شناسه کاربر:  {}\n{} فعالیت مشکوک از {} در پایگاه داده ما یافت شد. \n\n{}\n  اطلاعات کامل در سایت. \n{}\n\n ⚠️ نتایج بات 🤖".format(user[0].user_id, convert_numbers.english_to_persian(len(labels)+len(label_tweets)), user[0].user_name, test_label_list, page_link)
+                                        #             if len(message) <= 250:
+                                        #                 label_list.append(element)
 
                                         for item in label_list:
                                             label_list_result += "- {}\n".format(item)
