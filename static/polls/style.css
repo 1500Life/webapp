@@ -15,6 +15,14 @@ twitter-tweet{
   width: 200px;
 }
 
+.collapse{
+  border-color: rgb(44, 44, 44);
+  border-style: solid;
+  background-color: rgb(48, 48, 48);
+  padding: 5px;
+  margin: 5px;
+}
+
 .form-label{
   text-align: right;
   width: 60%;

@@ -11,7 +11,17 @@
     gtag('js', new Date());
 
     gtag('config', 'G-J25GPJEP27');
+
+    $('.collapse').collapse()
   </script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+   <script>
+    $(document).ready(function(){
+      $("#i_shortcut").click(function(){
+        $(".collapse").collapse('toggle');
+      });
+    });
+    </script>
   <!-- CSS only -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
   {% load static %}
@@ -46,9 +56,19 @@
             <hr>
             <ul style="list-style: none;">
                 <li><a href="https://twitter.com/1500Life?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @1500Life</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></li>
+                
                 <li>
-                  <div class="github-card" data-github="1500Life" data-width="400" data-height="151" data-theme="default"></div>
-                  <script src="//cdn.jsdelivr.net/github-cards/latest/widget.js"></script>
+                  <a href="#" id="i_shortcut">میانبر وبسایت برای آیفون</a>
+                  <div class="collapse">
+                    بوسیله میان‌بر آیفون می‌توانید سریع‌تر در اپلیکیشن توییتر یا نسخه وب موبایل افراد را جستجو کنید.
+                    <a href="https://www.icloud.com/shortcuts/23ba2335fe9b423a8518904af4a2b4b1">دریافت میانبر از آی‌کلود</a>
+                  </div>
+                  <br>
+                </li>
+
+                <li>
+                  <a href="https://github.com/1500Life">گیت‌هاب</a>
+                  <br>
                 </li>
                 <li><a href="https://1500.life/privacy-policy">سیاست حفظ حریم خصوصی</a></li>
             </ul>
