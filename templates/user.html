@@ -119,7 +119,7 @@
             {% for i in tweets %}
                 <tr>
                   <th scope="row">
-                    <p id="tweet">{{ i.text }}</p>
+                    <p id="tweet">{{ i.text }} - <span id="label_name">{{ i.fa }}</span></p>
                   </th>
                   <td>
                     <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -163,7 +163,7 @@
             {% for i in labels %}
                 <tr>
                   <th scope="row">
-                    <p id="tweet">{{ i.text }}</p>
+                    <p id="tweet">{{ i.text }} - <span id="label_name">{{ i.fa }}</span></p>
                   </th>
                   <td>
                     <a class="btn btn-primary" data-bs-toggle="collapse" href="#collapse{{ i.name }}{{ i.tweet_id }}{{ i.label_id }}" role="button" aria-expanded="false" aria-controls="collapseExample">

@@ -203,9 +203,9 @@ def show(request):
         accounts = Users.objects.filter(user_id=user.user_id).values()
 
         labels = []
-        try:
-            for ut in users_tweets:
-                tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
+        for ut in users_tweets:
+            tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
+            try:
                 get_label = Labels.objects.filter(id=tl.label_id)[0]
                 tweet = Tweets.objects.filter(id=ut['tweets_id'])[:1].get()
                 labels.append({
@@ -216,9 +216,20 @@ def show(request):
                     'archive' : tweet.archive,
                     'text': tweet.text,
                     'like_count': tweet.like_count,
-                    })
-        except:
-            pass
+                })
+            except:
+                tweet = Tweets.objects.filter(id=ut['tweets_id'])[:1].get()
+                labels.append({
+                    'label_id': tl.label_id,
+                    'tweet_id': tl.tweet_id,
+                    'name': 'no_label',
+                    'fa': 'فاقد برچسب',
+                    'archive' : tweet.archive,
+                    'text': tweet.text,
+                    'like_count': tweet.like_count,
+                })
+
+
 
         label_tweets = []
 

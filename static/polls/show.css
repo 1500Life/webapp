@@ -25,6 +25,16 @@ twitter-tweet{
   height: 100%;
 }
 
+#label_name{
+  color: orange;
+  background-color: #3b2424;
+  padding: 1px;
+  border-radius: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border: 1px solid orange;
+}
+
 .note {
   position: absolute;
   z-index: 10;

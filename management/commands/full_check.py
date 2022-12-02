@@ -105,22 +105,22 @@ class Command(BaseCommand):
                                 label_list_result = ""
                                 try:
                                     if len(labels) >= 1 or len(label_tweets) >= 1:
-                                        if ('PS752' in labels or 'devils_advocate_ps752' in labels or  'insult_victim_752' in labels) or ('PS752' in label_tweets or 'devils_advocate_ps752' in label_tweets or  'insult_victim_752' in label_tweets):
+                                        if ('PS752' in labels) or ('PS752' in label_tweets):
                                             label_list.append('هواپیمای ۷۵۲ چک 💥✈️')
                                             label_counter += 1
                                         if ('ghasem' in labels) or ('ghasem' in label_tweets):
                                             label_list.append('قاسم‌چک 🍗')
                                             label_counter += 1
-                                        if ('repeat_niac' in labels) or ('repeat_niac' in label_tweets):
+                                        if ('niac' in labels) or ('niac' in label_tweets):
                                             label_list.append('نایاک چک 💰')
                                             label_counter += 1
-                                        if ('support_arvan_cloud' in labels) or ('support_arvan_cloud' in label_tweets):
+                                        if ('arvan_cloud' in labels) or ('arvan_cloud' in label_tweets):
                                             label_list.append('ابرآروان چک')
                                             label_counter += 1
                                         if ('famtrip' in labels) or ('famtrip' in label_tweets):
                                             label_list.append('فم‌تریپ چک')
                                             label_counter += 1
-                                        if ('support_mullah_team' in labels) or ('support_mullah_team' in label_tweets):
+                                        if ('mullah_team' in labels) or ('mullah_team' in label_tweets):
                                             label_list.append('تیم ملا چک 🩸⚽')
                                             label_counter += 1
                                         
