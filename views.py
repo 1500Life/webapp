@@ -36,6 +36,14 @@ def archive(request):
     template = loader.get_template('archive.html')
     return HttpResponse(template.render(context, request))
 
+def label(request):
+    context = {}
+    context['label'] = Tweets.objects.all().order_by('like_count').values()
+    # paginator = Paginator(context['label'], 10)
+
+    template = loader.get_template('label.html')
+    return HttpResponse(template.render(context, request))
+
 def tweets(request):
     context = {}
     context['tweets'] = Tweets.objects.all().order_by('id').values()
@@ -204,7 +212,10 @@ def show(request):
 
         labels = []
         for ut in users_tweets:
-            tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
+            try:
+                tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
+            except:
+                pass
             try:
                 get_label = Labels.objects.filter(id=tl.label_id)[0]
                 tweet = Tweets.objects.filter(id=ut['tweets_id'])[:1].get()

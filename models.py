@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import connection
 
 class Users(models.Model):
     id = models.AutoField(primary_key=True)
@@ -19,22 +20,6 @@ class Users(models.Model):
                 )
         ]
 
-class UserTweetLikes(models.Model):
-    id = models.AutoField(primary_key=True)
-    author_id = models.CharField(max_length=200)
-    tweet_id = models.CharField(max_length=200)
-    liker_id = models.CharField(max_length=200)
-    user_name = models.CharField(max_length=200)
-    created_at = models.DateField(null=True)
-    description = models.CharField(max_length=200,null=True)
-    name = models.CharField(max_length=200,null=True)
-    profile_image_url = models.CharField(max_length=200,null=True)
-    protected = models.BooleanField(null=True)
-    verified = models.BooleanField(null=True)
-    followers = models.CharField(max_length=200,null=True)
-    following = models.CharField(max_length=200,null=True)
-
-
 class UsersTweets(models.Model):
     tweets_id = models.CharField(max_length=200)
     users_id = models.CharField(max_length=200)
@@ -44,6 +29,15 @@ class UsersTweets(models.Model):
                     fields=['tweets_id', 'users_id'], name='unique_migration_UserTweets_combination'
                 )
         ]
+
+class TweetReports(models.Model):
+    id = models.AutoField(primary_key=True)
+    tweet_id = models.CharField(max_length=200)
+    reported_by = models.CharField(max_length=200)
+    is_archived = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
 
 class Tweets(models.Model):
     id = models.CharField(max_length=200,primary_key=True)
@@ -66,8 +60,8 @@ class Tweets(models.Model):
     deleted = models.BooleanField(null=True)
 
 class TweetsLabels(models.Model):
-    tweet_id = models.CharField(max_length=200)
-    label_id = models.CharField(max_length=200)
+    label_id = models.CharField(max_length=200,null=True)
+    tweet_id = models.CharField(max_length=200,null=True)
     class Meta:
         constraints = [
                 models.UniqueConstraint(

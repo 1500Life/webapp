@@ -50,31 +50,32 @@ class Command(BaseCommand):
         json_response = json.loads(self.connect_to_endpoint(url, tweet_fields, 'GET'))
         if json_response['meta']['result_count']:
             for tweet in json_response['data']:
-                if ((tweet['text'].find('@1500life') != -1 or tweet['text'].find('@1500Life') != -1) and (tweet['text'].find('آرشیو') != -1) and tweet['text'][-12:] == '@1500Life آرشیو' ) :
-                    if 'referenced_tweets' in tweet:
-                        redisClient = redis.Redis(password=redis_password)
+                if ((tweet['text'].find('@1500life') != -1 or tweet['text'].find('@1500Life') != -1)):
+                    if (tweet['text'].find('آرشیو') != -1):
+                        if 'referenced_tweets' in tweet:
+                            redisClient = redis.Redis(password=redis_password)
 
-                        if redisClient.get(tweet['id']) == None:
-                            print('Internet Archive')
-                            internet_archive_result = ''
-                            url = 'https://twitter.com/twitter/status/' + tweet['referenced_tweets'][0]['id']
-                            user_agent = "Mozilla/5.0 (Windows NT 5.1; rv:40.0) Gecko/20100101 Firefox/40.0"
-                            save_api = WaybackMachineSaveAPI(url, user_agent)
-                            try:
-                                internet_archive_result = save_api.save()
-                            except:
-                                print('error during archiving')
-                                exit
+                            if redisClient.get(tweet['id']) == None:
+                                print('Internet Archive')
+                                internet_archive_result = ''
+                                url = 'https://twitter.com/twitter/status/' + tweet['referenced_tweets'][0]['id']
+                                user_agent = "Mozilla/5.0 (Windows NT 5.1; rv:40.0) Gecko/20100101 Firefox/40.0"
+                                save_api = WaybackMachineSaveAPI(url, user_agent)
+                                try:
+                                    internet_archive_result = save_api.save()
+                                except:
+                                    print('error during archiving')
+                                    exit
 
-                            print('Internet Archive status: ' + str(internet_archive_result))
+                                print('Internet Archive status: ' + str(internet_archive_result))
 
-                            print('Send reply')
-                            message = "توییت مورد نظر در وبسایت اینترنت آرکایو در این لحظه آرشیو شد: {} \n\n نتایج این آرشیو توسط یک بات توییتری ارسال شده است 🤖 ".format(internet_archive_result)
-                            self.sendReply(message, tweet['id'])
+                                print('Send reply')
+                                message = "توییت مورد نظر در وبسایت اینترنت آرکایو در این لحظه آرشیو شد: {} \n\n نتایج این آرشیو توسط یک بات توییتری ارسال شده است 🤖 ".format(internet_archive_result)
+                                self.sendReply(message, tweet['id'])
 
-                            redisClient.set(tweet['id'], 0)
-                        else:
-                            print('The queue is empty!')
+                                redisClient.set(tweet['id'], 0)
+                            else:
+                                print('The queue is empty!')
 
     def sendReply(self, message, tweet_id):
         twitter_auth_keys = {
