@@ -49,7 +49,7 @@ class Command(BaseCommand):
             try:
                 self.tweet_archive = Tweets.objects.filter(id=tweet['tweet_id'])[:1].get()
                 self.tweet_archive = self.tweet_archive
-            except:
+            except Exception as e:
                 self.tweet_archive = None
             self.archive(tweet['tweet_id'])
 
@@ -284,6 +284,8 @@ class Command(BaseCommand):
                     in_reply_to_user_id = json_response['data']['in_reply_to_user_id'] 
                 
                 referenced_tweets = ''
+
+                print(json_response['data'])
                 if ('referenced_tweets' in json_response['data']):
                     referenced_tweets = json_response['data']['referenced_tweets'] 
 
@@ -299,7 +301,6 @@ class Command(BaseCommand):
                     tweet_author.possibly_sensitive = json_response['data']['possibly_sensitive']
                     tweet_author.referenced_tweets = referenced_tweets
                     tweet_author.reply_settings = json_response['data']['reply_settings']
-                    tweet_author.source = json_response['data']['source']
                     tweet_author.retweet_count = json_response['data']['public_metrics']['retweet_count']
                     tweet_author.reply_count = json_response['data']['public_metrics']['reply_count']
                     tweet_author.like_count = json_response['data']['public_metrics']['like_count']

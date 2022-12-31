@@ -79,16 +79,24 @@ class Command(BaseCommand):
                 labels = []
                 tweets_fa = []
                 for ut in users_tweets:
-                    tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
-                    get_label = Labels.objects.filter(id=tl.label_id)[0]
+                    try:
+                        tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
+                        get_label = Labels.objects.filter(id=tl.label_id)[0]
+                    except:
+                        pass
+
                     labels.append(get_label.name)
                     tweets_fa.append(get_label.lang_fa)
 
                 label_tweets = []
 
                 for t in tweets:
-                    tl = TweetsLabels.objects.filter(tweet_id=t['id'])[0]
-                    get_label = Labels.objects.filter(id=tl.label_id)[0]
+                    try:
+                        tl = TweetsLabels.objects.filter(tweet_id=t['id'])[0]
+                        get_label = Labels.objects.filter(id=tl.label_id)[0]
+                    except:
+                        pass
+                        
                     label_tweets.append(get_label.name)
                     tweets_fa.append(get_label.lang_fa)
 
