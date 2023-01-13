@@ -9,27 +9,40 @@ from django.utils.text import Truncator
 from waybackpy import WaybackMachineSaveAPI
 from polls.models import *
 
-bearer_token = os.environ.get("BEARER_TOKEN_CONSOLE")
+bearer_token = os.environ.get("BEARER_TOKEN_WEB")
 
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'
-    label_name = ''
     next_token = ''
-    tweet_id = '1590440317362515968'
-
-    def add_arguments(self, parser):
-        parser.add_argument('tweet_id', nargs='+', type=int)
-        parser.add_argument('backup', nargs='+', type=int)
+    tweet_archive = ''
+    tweet_details = []
+    analytics = []
 
     def handle(self, *args, **options):
 
-        self.fire(options['tweet_id'][0])
+        tweet_id = '1611939099967115272'
 
-        self.stdout.write(self.style.SUCCESS('Successfully closed Tweet'))
+        self.fire(tweet_id)
+
+        self.analytics = sorted(self.analytics, key=lambda user: user[0])
+
+        print(self.analytics)
+        for i in self.analytics:
+            statusFile = open("data/analytics-report-{}.txt".format(tweet_id), "a+")
+            statusFile.write(str(i)+'\n')
+            statusFile.close()
+            print(i)
+
+        self.stdout.write(self.style.SUCCESS('Successfully Analysed Tweet'))
 
     def tweetLikes(self, id):
         user_fields = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld"
         url = "https://api.twitter.com/2/tweets/{}/liking_users?max_results=100".format(id)
+        return url, user_fields
+
+    def tweetRetweets(self, id):
+        user_fields = "user.fields=created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld"
+        url = "https://api.twitter.com/2/tweets/{}/retweeted_by?max_results=100".format(id)
         return url, user_fields
 
     def tweetRead(self, id):
@@ -79,6 +92,8 @@ class Command(BaseCommand):
         url, tweet_fields = self.tweetLikes(id)
         json_response = self.connect_to_endpoint(url, tweet_fields, id)
 
+        tweet_id = id
+
         try:
             if 'errors' in json_response:
                 print(json_response['errors'])
@@ -88,78 +103,78 @@ class Command(BaseCommand):
         except:
             pass
 
-
         if self.exitIfNotAuthorized(json_response):
-            return 2
-
-        count = 0
-        user_exist = 0
-        user_not_exist = 0
-        default_profile = 0
-        followers_count = 0
-        health_index = 0
-        for item in json_response['data']:
-            user = Users.objects.filter(user_id=json_response['data'][count]['id']).values()
-
-            if(item['profile_image_url'] == 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'):
-                default_profile += 1
-
-            if item['public_metrics']['followers_count'] >= 50:
-                followers_count += 1
-            if(user):
-                user_exist += 1
-            else:
-                user_not_exist += 1
-            count += 1
-        
-        analyse_result = user_exist/(user_exist+user_not_exist)*100
-
-        health_index = round((100-analyse_result)/10)
-
-        print(analyse_result, health_index)
-
-        return 0
-        try:
-            statusFile = open("analyse-status.csv", "r")
-            self.next_token = eval(statusFile.read())['next_token']
-            if self.next_token:
-                json_response["meta"]["next_token"] = self.next_token
-        except FileNotFoundError:
-            print('Status file does not exists.')
-
-        statusFile = open("analyse-status.csv", "w")
-        statusFile.write(str(json_response["meta"]))
-        statusFile.close()
-
-        while json_response["meta"]["next_token"]:
-
-            tweets_counter += json_response["meta"]["result_count"]
-
-            sleep(1)
-
-            if json_response['meta']['result_count'] != 0:
-                json_response = self.connect_to_endpoint(url + '&pagination_token=' + json_response["meta"]["next_token"], tweet_fields, id)
-            else:
-                break    
+            print("Tweet has been deleted: {}".format(id))
+        else:
+            self.insertUser(json_response)
 
             try:
-                json_response["meta"]
-                json_response["data"]
+                statusFile = open("analytics-status.csv", "r")
+                status_content = eval(statusFile.read())
+                if 'next_token' in status_content:
+                    self.next_token = status_content['next_token']
+                    if self.next_token:
+                        json_response["meta"]["next_token"] = self.next_token
+                else:
+                    pass
+            except FileNotFoundError:
+                print('Status file does not exists.')
 
-                if json_response['meta']['result_count'] == 0:
-                    break
-            except:
-                break
-
-            statusFile = open("analyse-status.csv", "w")
+            statusFile = open("analytics-status.csv", "w")
             statusFile.write(str(json_response["meta"]))
             statusFile.close()
 
-        try:
-            os.remove("analyse-status.csv")
-        except:
-            print('analyse-status.csv not found.')
-            pass
+            while 'next_token' in json_response["meta"] and json_response["meta"]["next_token"]:
 
-        print("Total like counter:" + str(tweets_counter))
+                sleep(2)
+
+                if json_response['meta']['result_count'] != 0:
+                    json_response = self.connect_to_endpoint(url + '&pagination_token=' + json_response["meta"]["next_token"], tweet_fields, id)
+                else:
+                    break    
+
+                try:
+                    json_response["meta"]
+                    json_response["data"]
+
+                    if json_response['meta']['result_count'] == 0:
+                        break
+                except:
+                    break
+
+                statusFile = open("analytics-status.csv", "w+")
+                statusFile.write(str(json_response["meta"]))
+                statusFile.close()
+                print("{} --> {}".format(str(datetime.now()), json_response['meta']['result_count']))
+                self.insertUser(json_response)
+
+            try:
+                os.remove("analytics-status.csv")
+            except:
+                print('analytics-status.csv not found.')
+                pass
+
+            print("Total like counter:" + str(len(self.analytics)))
+
+    def insertUser(self, json_response):
+            print(json_response['data'])
+            if 'data' in json_response:
+                for i in json_response['data']:
+                    self.analytics.append(
+                        (
+                            i['public_metrics']['followers_count'],
+                            i['id'],
+                            i['name'],
+                            i['username'],
+                            i['public_metrics']['following_count'],
+                            i['public_metrics']['tweet_count'],
+                            i['created_at'],
+                            i['location'],
+                            i['profile_image_url'],
+                            i['description'],
+                        )
+                    )
+
+
+
 

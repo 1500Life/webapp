@@ -13,6 +13,8 @@
     gtag('js', new Date());
 
     gtag('config', 'G-J25GPJEP27');
+
+    document.form_name.submit();
   </script>
   {% load static %}
   <meta charset="utf-8">
@@ -24,7 +26,7 @@
 <body>
 
 
-  <!-- <div class="row h-20">
+ <!--<div class="row h-20">
     <div class="col-sm-12 my-auto">
       <div id="header" class="container text-center">
         <div id="search-form" class="row align-items-center">
@@ -44,16 +46,15 @@
         </div>
       </div>
     </div>
-  </div> -->
-
+  </div>-->
   <form action="/show" method="get" style="all:unset;">
-    <nav class="navbar navbar-light bg-light" style="padding:5px;color: orange;background-color: #464646 !important;background-color: #464646 !important; box-shadow: 0px -15px 30px black;margin-bottom: 20px;">
-      
-        <a class="navbar-brand" href="https://1500.life">
-          <img src="{% static '/img/logo.png' %}" width="48" height="48" id="1500life" class="d-inline-block align-top" alt="">
-        </a>
-        <input type="text" name="username" class="form-control  form-input-search" id="inputPassword2" placeholder="@username">
-    </nav>
+  <nav class="navbar navbar-light bg-light" style="padding:5px;color: orange;background-color: #464646 !important;background-color: #464646 !important; box-shadow: 0px -15px 30px black;margin-bottom: 20px;">
+    
+      <a class="navbar-brand" href="https://1500.life">
+        <img src="{% static '/img/favicon.ico' %}" width="48" height="48" class="d-inline-block align-top" alt="">
+      </a>
+      <input type="text" name="username" class="form-control  form-input-search" id="inputPassword2" placeholder="@username">
+  </nav>
   </form>
 
 

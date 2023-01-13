@@ -79,6 +79,13 @@ twitter-tweet{
   width: 60%;
 }
 
+#1500life {
+  transition: transform .7s ease-in-out;
+}
+#1500life:hover {
+  transform: rotate(360deg);
+}
+
 /* show border around full height container */
 .h-100 {
 }

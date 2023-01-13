@@ -157,6 +157,115 @@ def api_user(request):
         response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
         return response
 
+def user_test(request):
+    context = {}
+    tweets = []
+
+    if 'username' in request.GET:
+        username = request.GET['username']
+        username = username.replace('@', '')
+        username = username.replace('https://twitter.com/', '')
+        user = Users.objects.filter(user_name__iexact=username)
+
+        try:
+            if user:
+                user = user[0]
+                tweets = Tweets.objects.filter(author=user.user_id).values()
+            else:
+                url, user_fields = readUser(username)
+                json_response = json.loads(connect_to_endpoint(url, user_fields, 'GET'))
+
+                if 'id' in json_response['data']:
+                    user = Users.objects.filter(user_id=json_response['data']['id'])
+
+                    if user:
+                        user = user[0]
+                        tweets = Tweets.objects.filter(author=user.user_id).values()
+                        Users.objects.create(
+                            user_name = json_response['data']['username'],
+                            user_id = json_response['data']['id'],
+                            created_at = parse_date(json_response['data']['created_at']),
+                            description = Truncator(json_response['data']['description']).chars(200),
+                            name = json_response['data']['name'],
+                            profile_image_url = json_response['data']['profile_image_url'],
+                            protected = json_response['data']['protected'],
+                            public_metrics = json_response['data']['public_metrics'],
+                            verified = json_response['data']['verified'],
+                        ).save()
+                    else:
+                        messages.error(request, 'سابقه‌ای از این کاربر در پایگاه داده ما یافت نشد')
+                        template = loader.get_template('user_test.html')
+                        return HttpResponse(template.render(context, request))
+                else:
+                    messages.error(request, 'سابقه‌ای از این کاربر در پایگاه داده ما یافت نشد')
+                    template = loader.get_template('user_test.html')
+                    return HttpResponse(template.render(context, request))
+        except:
+            messages.error(request, 'سابقه‌ای از این کاربر در پایگاه داده ما یافت نشد')
+            template = loader.get_template('user_test.html')
+            return HttpResponse(template.render(context, request))
+
+        users_tweets = UsersTweets.objects.filter(users_id=user.user_id).values()
+
+        accounts = Users.objects.filter(user_id=user.user_id).values()
+
+        labels = []
+        for ut in users_tweets:
+            try:
+                tl = TweetsLabels.objects.filter(tweet_id=ut['tweets_id'])[0]
+            except:
+                pass
+            try:
+                get_label = Labels.objects.filter(id=tl.label_id)[0]
+                tweet = Tweets.objects.filter(id=ut['tweets_id'])[:1].get()
+                labels.append({
+                    'label_id': tl.label_id,
+                    'tweet_id': tl.tweet_id,
+                    'name': get_label.name,
+                    'fa': get_label.lang_fa,
+                    'archive' : tweet.archive,
+                    'text': tweet.text,
+                    'like_count': tweet.like_count,
+                })
+            except:
+                tweet = Tweets.objects.filter(id=ut['tweets_id'])[:1].get()
+                labels.append({
+                    'label_id': tl.label_id,
+                    'tweet_id': tl.tweet_id,
+                    'name': 'no_label',
+                    'fa': 'فاقد برچسب',
+                    'archive' : tweet.archive,
+                    'text': tweet.text,
+                    'like_count': tweet.like_count,
+                })
+
+
+
+        label_tweets = []
+
+        try:
+            for tweet in tweets:
+                tl = TweetsLabels.objects.filter(tweet_id=tweet['id'])[0]
+                get_label = Labels.objects.filter(id=tl.label_id)[0]
+                get_tweet = Tweets.objects.filter(id=tl.tweet_id)[:1].get()
+                label_tweets.append({
+                    'label_id': tl.label_id,
+                    'tweet_id': tl.tweet_id,
+                    'name': get_label.name,
+                    'fa': get_label.lang_fa,
+                    'archive' : tweet['archive'],
+                    'text': get_tweet.text,
+                    'like_count': get_tweet.like_count,
+                    })
+        except:
+            pass
+
+        context['user'] = user
+        context['labels'] = labels
+        context['tweets'] = label_tweets
+        context['accounts'] = accounts
+        template = loader.get_template('user_test.html')
+        return HttpResponse(template.render(context, request))
 
 def show(request):
     context = {}

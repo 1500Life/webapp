@@ -134,15 +134,6 @@ class Command(BaseCommand):
                                         
                                         page_link = 'https://1500.life/show?username={}'.format(user[0].user_name)
 
-                                        # if (label_counter <= 1):
-                                            
-                                        #     for element in tweets_fa:
-                                        #         if len(element) <= 20:
-                                        #             test_label_list =  "- {}\n".format(element)
-                                        #             message = "شناسه کاربر:  {}\n{} فعالیت مشکوک از {} در پایگاه داده ما یافت شد. \n\n{}\n  اطلاعات کامل در سایت. \n{}\n\n ⚠️ نتایج بات 🤖".format(user[0].user_id, convert_numbers.english_to_persian(len(labels)+len(label_tweets)), user[0].user_name, test_label_list, page_link)
-                                        #             if len(message) <= 250:
-                                        #                 label_list.append(element)
-
                                         for item in label_list:
                                             label_list_result += "- {}\n".format(item)
                                         
@@ -169,7 +160,34 @@ class Command(BaseCommand):
                             self.sendReply(message, tweet['id'])
                             print(message)
                             redisClient.set('help-{}'.format(tweet['id']), 0)
-                    
+
+                    if (tweet['text'].find('گزارش توییت') != -1):
+
+                        redisClient = redis.Redis(password=redis_password)
+
+                        if redisClient.get('report-tweet-{}-{}-{}'.format(user_id, tweet['id'], tweet['referenced_tweets'][0]['id'])) == None:
+
+                            print('Internet Archive')
+                            internet_archive_result = ''
+                            url = 'https://twitter.com/twitter/status/' + tweet['referenced_tweets'][0]['id']
+                            user_agent = "Mozilla/5.0 (Windows NT 5.1; rv:40.0) Gecko/20100101 Firefox/40.0"
+                            save_api = WaybackMachineSaveAPI(url, user_agent)
+                            try:
+                                internet_archive_result = save_api.save()
+                            except:
+                                print('error during archiving')
+                                pass
+                            
+                            user_report_file = open("user_report.txt", "a+")
+                            line = ["user:{} - tweet:{} - archive:{}\n".format(user_id, tweet['referenced_tweets'][0]['id'], internet_archive_result)]
+                            user_report_file.writelines(line)
+                            user_report_file.close()
+
+                            message = "گزارش 📝 شما با موفقیت برای بررسی ثبت شد \n\n شناسه کاربر: {} \n\n شناسه توییت: {} \n\n آرشیو توییت: {} \n\n نتایج بات 🤖".format(user_id, tweet['referenced_tweets'][0]['id'], internet_archive_result)
+                            self.sendReply(message, tweet['id'])
+                            print(message)
+                            redisClient.set('report-tweet-{}-{}-{}'.format(user_id, tweet['id'], tweet['referenced_tweets'][0]['id']), 0)
+
                     if (tweet['text'].find('آنالیز توییت') != -1):
                         redisClient = redis.Redis(password=redis_password)
                         tweets_counter = 0
@@ -201,7 +219,7 @@ class Command(BaseCommand):
                                 if(item['profile_image_url'] == 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'):
                                     default_profile += 1
 
-                                if item['public_metrics']['followers_count'] >= 50:
+                                if item['public_metrics']['followers_count'] >= 1000:
                                     followers_count += 1
                                 if(user):
                                     user_exist += 1
@@ -214,7 +232,7 @@ class Command(BaseCommand):
                             health_index = round((100-analyse_result)/10)
 
                             if redisClient.get('analyse-tweet-{}'.format(tweet['id'])) == None:
-                                message = "آنالیز این توییت براساس ۱۰۰ لایک آخر\n\n  -  رتبه توییت {} از ۱۰ است \n  -  حدود {} درصد از لایک‌ کننده‌ها دارای فعالیت ناامن هستند. 🧌\n  -  تعداد {} کاربر روح لایک کرده‌اند 👻\n  -  تعداد {} نفر از لایک کننده‌ها دارای حداقل ۵۰ فالاور هستند 🏃\n\n ⚠️ نتایج بات 🤖".format(convert_numbers.english_to_persian(health_index), convert_numbers.english_to_persian(analyse_result), convert_numbers.english_to_persian(default_profile), convert_numbers.english_to_persian(followers_count))
+                                message = "آنالیز این توییت براساس ۱۰۰ لایک آخر\n\n  -  رتبه توییت {} از ۱۰ است \n  -  حدود {} درصد از لایک‌ کننده‌ها دارای فعالیت ناامن هستند. 🧌\n  -  تعداد {} کاربر روح لایک کرده‌اند 👻\n  -  تعداد {} نفر از لایک کننده‌ها دارای حداقل ۱۰۰۰ فالاور هستند 🏃\n\n ⚠️ نتایج بات 🤖".format(convert_numbers.english_to_persian(health_index), convert_numbers.english_to_persian(analyse_result), convert_numbers.english_to_persian(default_profile), convert_numbers.english_to_persian(followers_count))
                                 self.sendReply(message, tweet['id'])
                                 print(message)
                                 redisClient.set('analyse-tweet-{}'.format(tweet['id']), 0)
