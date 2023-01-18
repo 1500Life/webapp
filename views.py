@@ -44,6 +44,16 @@ def label(request):
     template = loader.get_template('label.html')
     return HttpResponse(template.render(context, request))
 
+def user_info(request):
+    context = {}
+    template = loader.get_template('user_info.html')
+    get_user = UsersInfo.objects.filter(user_id=request.GET['id']).values()
+
+    user_chart = UsersInfo.objects.distinct('screen_name', 'name', 'protected', 'description', 'location').filter(user_id=request.GET['id']).values()
+    context['users'] = get_user
+    context['user_chart'] = user_chart
+    return HttpResponse(template.render(context, request))
+
 def tweets(request):
     context = {}
     context['tweets'] = Tweets.objects.all().order_by('id').values()

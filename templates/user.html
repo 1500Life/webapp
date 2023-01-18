@@ -85,6 +85,9 @@
             {% if user.user_id|length > 0  %}
             <h6>
               {{ user.user_id }} :شماره یکتا توییتر
+              <br>
+              <br>
+              <a href="/user_info?id={{ user.user_id }}"><button class="btn"><i class="fa-solid fa-chart-column"></i> آمار کامل</button></a>
             </h6>
             {% endif %}
             {% if accounts|length >= 2 %}

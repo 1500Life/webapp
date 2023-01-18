@@ -9,7 +9,7 @@ from django.utils.text import Truncator
 from waybackpy import WaybackMachineSaveAPI
 from polls.models import *
 
-bearer_token = os.environ.get("BEARER_TOKEN_WEB")
+bearer_token = os.environ.get("BEARER_TOKEN_CONSOLE")
 
 class Command(BaseCommand):
     help = 'Closes the specified poll for voting'

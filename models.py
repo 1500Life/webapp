@@ -20,6 +20,29 @@ class Users(models.Model):
                 )
         ]
 
+class UsersInfo(models.Model):
+    id = models.AutoField(primary_key=True)
+    timestap = models.DateTimeField(auto_now_add=True)
+    user_id = models.CharField(max_length=200,null=True)
+    name = models.CharField(max_length=200,null=True)
+    screen_name = models.CharField(max_length=200,null=True)
+    location = models.CharField(max_length=200,null=True)
+    description = models.CharField(max_length=400,null=True)
+    protected = models.CharField(max_length=200,null=True)
+    followers_count = models.CharField(max_length=200,null=True)
+    friends_count = models.CharField(max_length=200,null=True)
+    listed_count = models.CharField(max_length=200,null=True)
+    created_at = models.CharField(max_length=200,null=True)
+    favourites_count = models.CharField(max_length=200,null=True)
+    utc_offset = models.CharField(max_length=200,null=True)
+    time_zone = models.CharField(max_length=200,null=True)
+    geo_enabled = models.CharField(max_length=200,null=True)
+    verified = models.CharField(max_length=200,null=True)
+    statuses_count = models.CharField(max_length=200,null=True)
+    lang = models.CharField(max_length=200,null=True)
+    contributors_enabled = models.CharField(max_length=200,null=True)
+    profile_image_url = models.CharField(max_length=200,null=True)
+
 class UsersTweets(models.Model):
     tweets_id = models.CharField(max_length=200)
     users_id = models.CharField(max_length=200)
